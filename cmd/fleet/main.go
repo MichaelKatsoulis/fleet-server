@@ -867,7 +867,9 @@ func (f *FleetServer) runSubsystems(ctx context.Context, cfg *config.Config, g *
 	g.Go(loggedRunFunc(ctx, "Revision monitor", am.Run))
 
 	ad = action.NewDispatcher(am)
-	g.Go(loggedRunFunc(ctx, "Revision dispatcher", ad.Run))
+	g.Go(loggedRunFunc(ctx, "Revision dispatcher",
+
+		ad.Run))
 	tr, err = action.NewTokenResolver(bulker)
 	if err != nil {
 		return err
@@ -882,11 +884,16 @@ func (f *FleetServer) runSubsystems(ctx context.Context, cfg *config.Config, g *
 		return err
 	}
 
+	hh, err := api.NewHintHundler(f.verCon, &cfg.Inputs[0].Server, bulker, f.cache)
+	if err != nil {
+		return err
+	}
+
 	at := api.NewArtifactT(&cfg.Inputs[0].Server, bulker, f.cache)
 	ack := api.NewAckT(&cfg.Inputs[0].Server, bulker, f.cache)
 	st := api.NewStatusT(&cfg.Inputs[0].Server, bulker, f.cache)
 
-	router := api.NewRouter(ctx, bulker, ct, et, at, ack, st, sm, tracer, f.bi)
+	router := api.NewRouter(ctx, bulker, ct, et, hh, at, ack, st, sm, tracer, f.bi)
 
 	g.Go(loggedRunFunc(ctx, "Http server", func(ctx context.Context) error {
 		return api.Run(ctx, router, &cfg.Inputs[0].Server)

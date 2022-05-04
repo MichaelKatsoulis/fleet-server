@@ -8,19 +8,21 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/elastic/fleet-server/v7/internal/pkg/build"
-	"github.com/elastic/fleet-server/v7/internal/pkg/bulk"
-	"github.com/elastic/fleet-server/v7/internal/pkg/logger"
-	"github.com/elastic/fleet-server/v7/internal/pkg/policy"
 	"github.com/julienschmidt/httprouter"
 	"github.com/rs/zerolog/log"
 	"go.elastic.co/apm"
 	"go.elastic.co/apm/module/apmhttprouter"
+
+	"github.com/elastic/fleet-server/v7/internal/pkg/build"
+	"github.com/elastic/fleet-server/v7/internal/pkg/bulk"
+	"github.com/elastic/fleet-server/v7/internal/pkg/logger"
+	"github.com/elastic/fleet-server/v7/internal/pkg/policy"
 )
 
 const (
 	RouteStatus    = "/api/status"
 	RouteEnroll    = "/api/fleet/agents/:id"
+	RouteHints     = "/api/fleet/agents/:id/hints"
 	RouteCheckin   = "/api/fleet/agents/:id/checkin"
 	RouteAcks      = "/api/fleet/agents/:id/acks"
 	RouteArtifacts = "/api/fleet/artifacts/:id/:sha2"
@@ -31,6 +33,7 @@ type Router struct {
 	bulker bulk.Bulk
 	ct     *CheckinT
 	et     *EnrollerT
+	hh     *HintHundler
 	at     *ArtifactT
 	ack    *AckT
 	st     *StatusT
@@ -38,12 +41,13 @@ type Router struct {
 	bi     build.Info
 }
 
-func NewRouter(ctx context.Context, bulker bulk.Bulk, ct *CheckinT, et *EnrollerT, at *ArtifactT, ack *AckT, st *StatusT, sm policy.SelfMonitor, tracer *apm.Tracer, bi build.Info) *httprouter.Router {
+func NewRouter(ctx context.Context, bulker bulk.Bulk, ct *CheckinT, et *EnrollerT, hh *HintHundler, at *ArtifactT, ack *AckT, st *StatusT, sm policy.SelfMonitor, tracer *apm.Tracer, bi build.Info) *httprouter.Router {
 	r := Router{
 		ctx:    ctx,
 		bulker: bulker,
 		ct:     ct,
 		et:     et,
+		hh:     hh,
 		sm:     sm,
 		at:     at,
 		ack:    ack,
@@ -65,6 +69,11 @@ func NewRouter(ctx context.Context, bulker bulk.Bulk, ct *CheckinT, et *Enroller
 			http.MethodPost,
 			RouteEnroll,
 			r.handleEnroll,
+		},
+		{
+			http.MethodPost,
+			RouteHints,
+			r.handleHints,
 		},
 		{
 			http.MethodPost,

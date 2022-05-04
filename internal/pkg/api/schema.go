@@ -103,6 +103,38 @@ type AckResponse struct {
 	Items  []AckResponseItem `json:"items,omitempty"`
 }
 
+type HintsRequest struct {
+	AgentId   string `json:"agent_id,omitempty"`
+	Type      string `json:"type,omitempty"`
+	Container struct {
+		Id    string `json:"id"`
+		Image struct {
+			Name string `json:"name"`
+		} `json:"image"`
+		Runtime string `json:"runtime"`
+	} `json:"container"`
+	Orchestrator struct {
+		Cluster struct {
+			Name string `json:"name"`
+			Url  string `json:"url"`
+		} `json:"cluster"`
+	} `json:"orchestrator"`
+	Kubernetes struct {
+		Namespace   string            `json:"namespace"`
+		Annotations map[string]string `json:"annotations"`
+		Labels      map[string]string `json:"labels"`
+		Pod         struct {
+			Ip   string `json:"ip"`
+			Name string `json:"name"`
+			Uid  string `json:"uid"`
+		} `json:"pod"`
+	} `json:"kubernetes"`
+}
+
+type HintsResponse struct {
+	Action string `json:"action"`
+}
+
 func NewAckResponse(size int) AckResponse {
 	return AckResponse{
 		Action: "acks",

@@ -64,5 +64,6 @@ const (
 	AgentId               = "fleet.agent.id"
 	EnrollApiKeyId        = "fleet.enroll.apikey.id"
 	AccessApiKeyId        = "fleet.access.apikey.id"
+	HintsApiKeyId         = "fleet.hints.apikey.id"
 	DefaultOutputApiKeyId = "fleet.default.apikey.id"
 )

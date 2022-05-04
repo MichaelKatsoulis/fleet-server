@@ -11,6 +11,7 @@ const (
 	FleetActions           = ".fleet-actions"
 	FleetActionsResults    = ".fleet-actions-results"
 	FleetAgents            = ".fleet-agents"
+	FleetHints             = ".fleet-hints"
 	FleetArtifacts         = ".fleet-artifacts"
 	FleetEnrollmentAPIKeys = ".fleet-enrollment-api-keys"
 	FleetPolicies          = ".fleet-policies"

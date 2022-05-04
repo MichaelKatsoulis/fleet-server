@@ -31,6 +31,7 @@ const (
 	LogAgentID        = logger.AgentId
 	LogEnrollAPIKeyID = logger.EnrollApiKeyId
 	LogAccessAPIKeyID = logger.AccessApiKeyId
+	LogHintsAPIKeyID  = logger.HintsApiKeyId
 )
 
 // HTTPErrResp is an HTTP error response
