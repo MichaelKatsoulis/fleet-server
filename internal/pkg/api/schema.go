@@ -104,22 +104,17 @@ type AckResponse struct {
 }
 
 type HintsRequest struct {
-	AgentId   string `json:"agent_id,omitempty"`
-	Type      string `json:"type,omitempty"`
-	Container struct {
-		Id    string `json:"id"`
-		Image struct {
-			Name string `json:"name"`
-		} `json:"image"`
-		Runtime string `json:"runtime"`
-	} `json:"container"`
-	Orchestrator struct {
-		Cluster struct {
-			Name string `json:"name"`
-			Url  string `json:"url"`
-		} `json:"cluster"`
-	} `json:"orchestrator"`
+	AgentId    string `json:"agent_id,omitempty"`
+	Type       string `json:"type,omitempty"`
 	Kubernetes struct {
+		Container struct {
+			Id       string `json:"id"`
+			Image    string `json:"image"`
+			Name     string `json:"name"`
+			Port     string `json:"port,omitempty"`
+			PortName string `json:"port_name,omitempty"`
+			Runtime  string `json:"runtime"`
+		} `json:"container"`
 		Namespace   string            `json:"namespace"`
 		Annotations map[string]string `json:"annotations"`
 		Labels      map[string]string `json:"labels"`

@@ -109,17 +109,7 @@ func (hh *HintHundler) handleHints(zlog *zerolog.Logger, w http.ResponseWriter, 
 }
 
 func (hh *HintHundler) processRequest(zlog zerolog.Logger, w http.ResponseWriter, r *http.Request, id string) (*HintsResponse, error) {
-
-	// Validate that an enrollment record exists for a key with this id.
-	//erec, err := hh.fetchEnrollmentKeyRecord(r.Context(), enrollmentAPIKeyID)
-	//if err != nil {
-	//	return nil, err
-	//}
-
-	body := r.Body
-
-	readCounter := datacounter.NewReaderCounter(body)
-
+	readCounter := datacounter.NewReaderCounter(r.Body)
 	// Parse the request body
 	req, err := decodeHintsRequest(readCounter)
 	if err != nil {
@@ -170,7 +160,7 @@ func createHint(ctx context.Context, bulker bulk.Bulk, id string, hints HintsReq
 		return err
 	}
 
-	_, err = bulker.Create(ctx, dl.FleetHints, id, data, bulk.WithRefresh())
+	_, err = bulker.Create(ctx, dl.FleetHints, "", data, bulk.WithRefresh())
 	if err != nil {
 		return err
 	}
